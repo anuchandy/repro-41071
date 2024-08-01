@@ -7,6 +7,7 @@ import com.azure.messaging.servicebus.ServiceBusReceiverClient;
 import com.azure.messaging.servicebus.ServiceBusSenderClient;
 import com.azure.messaging.servicebus.administration.ServiceBusAdministrationClient;
 import com.azure.messaging.servicebus.administration.ServiceBusAdministrationClientBuilder;
+import com.azure.messaging.servicebus.administration.models.TopicProperties;
 import com.azure.messaging.servicebus.models.DeadLetterOptions;
 
 import java.time.Instant;
@@ -18,6 +19,10 @@ public class App {
     private static final String connectionString = System.getenv("AZURE_SERVICEBUS_NAMESPACE_CONNECTION_STRING");
 
     public static void main( String[] args ) throws InterruptedException {
+        run();
+    }
+
+    private static void run() throws InterruptedException {
         final TopicSubscription resource = createTopicAndSubscription();
         final ServiceBusMessage messageToSend = createMessage();
 
@@ -75,6 +80,7 @@ public class App {
 
         topicSender.close();
         receiver2.close();
+
     }
 
     private static TopicSubscription createTopicAndSubscription() {
@@ -89,6 +95,15 @@ public class App {
         adminClient.createTopic(topicName);
         adminClient.createSubscription(topicName, subscriptionName);
         System.out.println("Created topic: " + topicName + " and subscription: " + subscriptionName);
+
+        final TopicProperties topicProperties = adminClient.getTopic(topicName);
+        // Default max message size for topic is 1024MB
+        System.out.println("Max message size:" + topicProperties.getMaxSizeInMegabytes() + "MB");
+        final int newMaxSizeInKb = 102400; // 102400KB -> ~100MB
+        // Downgrade max message size from 1024MB to ~100MB
+        topicProperties.setMaxMessageSizeInKilobytes(newMaxSizeInKb);
+        adminClient.updateTopic(topicProperties);
+
         return new TopicSubscription(topicName, subscriptionName);
     }
 
@@ -103,6 +118,8 @@ public class App {
                 "        \\\"version\\\": \\\"1.0\\\",\\r\\n" + //
                 "    }\\r\\n" + //
                 "}\",\"headers\":{\"accept\":\"*/*\",\"connection\":\"keep-alive\",\"host\":\"localhost:7071\",\"user-agent\":\"PostmanRuntime/7.40.0\",\"accept-encoding\":\"gzip, deflate, br\",\"content-type\":\"application/json\",\"content-length\":\"502\",\"msgid\":\"14317\",\"postman-token\":\"eaba8efc-d0ff-43df-a70d-7cc96f56d115\"},\"destination\":\"Microsoft\",\"destinationEndPointUrl\":null,\"responseMsgTopicName\":null,\"publishMsgTopicName\":null,\"blobContainerEndpointDetails\":null,\"blobNamePrefixIncludeFlag\":null,\"serviceBusSubjectValue\":null}";
+
+        System.out.println(jsonRequest);
 
         final ServiceBusMessage serviceBusMessage = new ServiceBusMessage(jsonRequest)
                 .setMessageId("14317")
