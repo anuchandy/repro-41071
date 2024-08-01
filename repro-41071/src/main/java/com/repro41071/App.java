@@ -97,10 +97,10 @@ public class App {
         System.out.println("Created topic: " + topicName + " and subscription: " + subscriptionName);
 
         final TopicProperties topicProperties = adminClient.getTopic(topicName);
-        // Default max message size for topic is 1024MB
+        // Default max message size for topic is 1024KB
         System.out.println("Max message size:" + topicProperties.getMaxSizeInMegabytes() + "MB");
-        final int newMaxSizeInKb = 102400; // 102400KB -> ~100MB
-        // Downgrade max message size from 1024MB to ~100MB
+        final int newMaxSizeInKb = 102400; // ~100MB
+        // Downgrade max message size from 1024KB to ~100MB
         topicProperties.setMaxMessageSizeInKilobytes(newMaxSizeInKb);
         adminClient.updateTopic(topicProperties);
 
@@ -108,22 +108,11 @@ public class App {
     }
 
     private static ServiceBusMessage createMessage() {
-        final String jsonRequest = "{\"uri\":\"null\",\"queryParams\":{\"msgType\":\"AzureServiceBus\",\"warehouseId\":\"0000000\"},\"body\":\"{\\r\\n" + //
-                "    \\\"messageHeader\\\": {\\r\\n" + //
-                "        \\\"msgId\\\": 14317,\\r\\n" + //
-                "        \\\"msgTime\\\": \\\"2023-04-18T14:11:31.5515919-04:00\\\",\\r\\n" + //
-                "        \\\"msgType\\\": \\\"AzureServiceBus\\\",\\r\\n" + //
-                "        \\\"sender\\\": \\\"Raja\\\",\\r\\n" + //
-                "        \\\"receiver\\\": \\\"Microsoft\\\",\\r\\n" + //
-                "        \\\"version\\\": \\\"1.0\\\",\\r\\n" + //
-                "    }\\r\\n" + //
-                "}\",\"headers\":{\"accept\":\"*/*\",\"connection\":\"keep-alive\",\"host\":\"localhost:7071\",\"user-agent\":\"PostmanRuntime/7.40.0\",\"accept-encoding\":\"gzip, deflate, br\",\"content-type\":\"application/json\",\"content-length\":\"502\",\"msgid\":\"14317\",\"postman-token\":\"eaba8efc-d0ff-43df-a70d-7cc96f56d115\"},\"destination\":\"Microsoft\",\"destinationEndPointUrl\":null,\"responseMsgTopicName\":null,\"publishMsgTopicName\":null,\"blobContainerEndpointDetails\":null,\"blobNamePrefixIncludeFlag\":null,\"serviceBusSubjectValue\":null}";
+        final String body = "hello-world";
+        System.out.println(body);
 
-        System.out.println(jsonRequest);
-
-        final ServiceBusMessage serviceBusMessage = new ServiceBusMessage(jsonRequest)
+        final ServiceBusMessage serviceBusMessage = new ServiceBusMessage(body)
                 .setMessageId("14317")
-                .setContentType("application/json")
                 .setSubject("AzureServiceBus")
                 .setCorrelationId("14317")
                 .setSessionId("serialize-me")
