@@ -98,7 +98,7 @@ public class App {
 
         final TopicProperties topicProperties = adminClient.getTopic(topicName);
         // Default max message size for topic is 1024KB
-        System.out.println("Max message size:" + topicProperties.getMaxSizeInMegabytes() + "MB");
+        System.out.println("Max message size:" + topicProperties.getMaxSizeInMegabytes());
         final int newMaxSizeInKb = 102400; // ~100MB
         // Update max message size from 1024KB to ~100MB
         topicProperties.setMaxMessageSizeInKilobytes(newMaxSizeInKb);
