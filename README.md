@@ -1,3 +1,12 @@
+## with attempt to update message size
+```
+Created topic: topic-1722496803583 and subscription: sub0
+Max message size:1024MB
+Exception in thread "main" com.azure.core.exception.HttpResponseException: SubCode=40000. Bad Request. To know more visit https://aka.ms/sbResourceMgrExceptions. . TrackingId:31288929-c802-478f-8179-b93093d2f2a9_G29, SystemTracker:bowerready.servicebus.windows.net:topic-1722496803583, Timestamp:2024-08-01T07:20:05
+```
+
+## with default topic
+
 ```
 Created topic: topic-1722150318427 and subscription: sub0
 Sending a message.
